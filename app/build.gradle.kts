@@ -33,6 +33,10 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    dataBinding {
+        enable = true
+    }
 }
 
 dependencies {
@@ -61,4 +65,8 @@ dependencies {
 
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-extensions:2.2.0")
+
+    // size
+    implementation("com.intuit.ssp:ssp-android:1.0.6")
+    implementation("com.intuit.sdp:sdp-android:1.0.6")
 }
