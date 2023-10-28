@@ -41,8 +41,17 @@
                 android:hint="@string/username"
                 android:inputType="textEmailAddress"
                 android:elevation="@dimen/_15sdp"
-                android:layout_marginBottom="@dimen/_10sdp"
                 android:autofillHints=""
+                />
+            <TextView
+                android:id="@+id/err_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Username Tidak Valid"
+                android:textColor="@color/red"
+                android:textStyle="bold"
+                android:visibility="invisible"
+                android:layout_marginBottom="@dimen/_10sdp"
                 />
             <TextView
                 android:layout_width="wrap_content"
@@ -63,7 +72,27 @@
                 android:layout_marginBottom="@dimen/_10sdp"
                 android:autofillHints=""
                 />
+            <TextView
+                android:id="@+id/err_pass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:visibility="invisible"
+                android:text="Password Tidak Valid"
+                android:textColor="@color/red"
+                android:layout_marginBottom="@dimen/_10sdp"
+                />
         </LinearLayout>
+        <ProgressBar
+            android:id="@+id/progress_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="invisible"
+            />
 
         <Button
             android:layout_width="match_parent"

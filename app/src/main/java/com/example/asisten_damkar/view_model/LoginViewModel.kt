@@ -14,10 +14,10 @@ class LoginViewModel: ViewModel() {
     fun onClickLoginButton(view: View) {
         loginListener?.onStarted()
         if(username.isNullOrEmpty() || password.isNullOrEmpty()) {
-            loginListener?.onNotValid("Invalid Email Or Password")
+            loginListener?.onNotValid()
             return
         }
         val loginResponse = LoginRepository().login(username!!, password!!)
-        loginListener?.onDone(loginResponse)
+        loginListener?.fallback(loginResponse)
     }
 }

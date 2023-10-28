@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 
 interface LoginListener {
     fun onStarted()
-    fun onNotValid(message: String)
-
-    fun onDone(message: LiveData<String>)
+    fun onNotValid()
+    fun fallback(success: LiveData<String?>)
 }
