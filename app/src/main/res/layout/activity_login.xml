@@ -4,6 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     >
+
+    <data>
+        <variable
+            name="model"
+            type="com.example.asisten_damkar.view_model.LoginViewModel" />
+    </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -27,12 +34,15 @@
                 android:layout_marginBottom="@dimen/_5sdp"
                 />
             <EditText
+                android:id="@+id/username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:text="@={model.username}"
                 android:hint="@string/username"
                 android:inputType="textEmailAddress"
-                android:elevation="@dimen/_10sdp"
+                android:elevation="@dimen/_15sdp"
                 android:layout_marginBottom="@dimen/_10sdp"
+                android:autofillHints=""
                 />
             <TextView
                 android:layout_width="wrap_content"
@@ -43,12 +53,15 @@
                 android:layout_marginBottom="@dimen/_5sdp"
                 />
             <EditText
+                android:id="@+id/password"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="@string/password"
                 android:inputType="textPassword"
-                android:elevation="@dimen/_10sdp"
+                android:elevation="@dimen/_13sdp"
+                android:text="@={model.password}"
                 android:layout_marginBottom="@dimen/_10sdp"
+                android:autofillHints=""
                 />
         </LinearLayout>
 
@@ -59,6 +72,7 @@
             android:layout_marginBottom="@dimen/_30sdp"
             android:layout_marginLeft="@dimen/_20sdp"
             android:layout_marginRight="@dimen/_20sdp"
+            android:onClick="@{model.onClickLoginButton}"
             android:text="@string/login"
             />
 
