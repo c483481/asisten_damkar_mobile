@@ -27,6 +27,11 @@ class LoginUtils {
     fun createLoginSession(token: String) {
         editor.putBoolean(IS_LOGIN, true)
         editor.putString(KEY_AT, token)
+        editor.commit()
+    }
+
+    fun getAccessToken(): String? {
+        return pref.getString(KEY_AT, "")
     }
 
     fun checkIsNotLogin() {

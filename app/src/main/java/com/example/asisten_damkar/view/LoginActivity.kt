@@ -22,6 +22,7 @@ class LoginActivity: AppCompatActivity(), LoginListener {
         super.onCreate(savedInstanceState)
 
         loginUtils = LoginUtils(this)
+        loginUtils!!.checkIsLogin()
 
         binding = DataBindingUtil.setContentView<ActivityLoginBinding>(this, R.layout.activity_login)
         val viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
