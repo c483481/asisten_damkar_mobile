@@ -13,8 +13,11 @@ class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-        val accessToken = LoginUtils(this).getAccessToken()
-        toast(accessToken.toString())
+
+        val loginUtils = LoginUtils(this)
+
+        loginUtils.checkIsNotLogin()
+
         val bottomNavigation = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
         val navController = Navigation.findNavController(this, R.id.host_fragment)
 
