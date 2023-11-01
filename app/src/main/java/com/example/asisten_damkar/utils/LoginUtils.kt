@@ -3,6 +3,7 @@ package com.example.asisten_damkar.utils
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import com.example.asisten_damkar.response.LoginResponse
 import com.example.asisten_damkar.view.HomeActivity
 import com.example.asisten_damkar.view.LoginActivity
 
@@ -22,16 +23,22 @@ class LoginUtils {
         const val PREF_NAME = "LOGIN_SESSION"
         const val IS_LOGIN = "isLoggedIn"
         const val KEY_AT = "accessToken"
+        const val ROLE = "role"
     }
 
-    fun createLoginSession(token: String) {
+    fun createLoginSession(loginResponse: LoginResponse) {
         editor.putBoolean(IS_LOGIN, true)
-        editor.putString(KEY_AT, token)
+        editor.putString(ROLE, loginResponse.tagRole)
+        editor.putString(KEY_AT, loginResponse.key.accessToken.token)
         editor.commit()
     }
 
     fun getAccessToken(): String? {
         return pref.getString(KEY_AT, "")
+    }
+
+    fun getRole(): String? {
+        return pref.getString(ROLE, "Error")
     }
 
     fun checkIsNotLogin() {

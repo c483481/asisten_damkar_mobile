@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.asisten_damkar.R
 import com.example.asisten_damkar.databinding.ActivityLoginBinding
 import com.example.asisten_damkar.listener.LoginListener
+import com.example.asisten_damkar.response.LoginResponse
 import com.example.asisten_damkar.utils.LoginUtils
 import com.example.asisten_damkar.utils.hide
 import com.example.asisten_damkar.utils.show
@@ -34,11 +35,11 @@ class LoginActivity: AppCompatActivity(), LoginListener {
         binding?.progressBar?.show()
     }
 
-    override fun fallback(success: LiveData<String?>) {
+    override fun fallback(success: LiveData<LoginResponse?>) {
         success.observe(this, Observer {
 
             binding!!.progressBar.hide()
-            if(!it.isNullOrEmpty()) {
+            if(it != null) {
                 loginUtils!!.createLoginSession(it)
                 startActivity(Intent(this, HomeActivity::class.java))
             } else {
