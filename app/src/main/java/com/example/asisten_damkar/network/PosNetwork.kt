@@ -15,8 +15,8 @@ interface PosNetwork {
     @GET("pos")
     fun getPos(
         @Header("Authorization") token: String,
-        @Query("lng") lng: Double,
-        @Query("lat") lat: Double,
+        @Query("filters[lng]") lng: Double,
+        @Query("filters[lat]") lat: Double,
         @Query("filters[km]") km: Int = 1,
         @Query("showAll") showAll: Boolean = true,
     ): Call<Response<ResponseList<PosResponse>>>

@@ -105,6 +105,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
 
     private fun posTracker() {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        binding.buttonMaps.text = "tambah"
         getLastLocation()
     }
 
@@ -129,7 +130,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                             onResponseListPosOnTracker(data)
 
                             gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom.toFloat()))
-                            addPos()
+                            addPosFunction()
                         }
                     }
             } else {
@@ -142,9 +143,15 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         }
     }
 
-    private fun addPos() {
+    private fun addPosFunction() {
         var activeMarker: Marker? = null
+        var loc: LatLng? = null
+        binding.buttonMaps.setOnClickListener {
+
+        }
+
         gMap.setOnMapClickListener { location->
+            loc = location
             activeMarker?.remove()
             val marker = gMap.addMarker(MarkerOptions().position(location))
             activeMarker = marker
