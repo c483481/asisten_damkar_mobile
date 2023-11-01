@@ -8,9 +8,20 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.widget.FrameLayout
 import androidx.core.app.ActivityCompat
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.asisten_damkar.R
+import com.example.asisten_damkar.databinding.ActivityMapsBinding
+import com.example.asisten_damkar.response.PosResponse
+import com.example.asisten_damkar.response.ResponseList
+import com.example.asisten_damkar.utils.LoginUtils
+import com.example.asisten_damkar.utils.hide
+import com.example.asisten_damkar.utils.show
 import com.example.asisten_damkar.utils.toast
+import com.example.asisten_damkar.view_model.MapsViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
@@ -32,20 +43,29 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
     lateinit var map: FrameLayout
     lateinit var topic: String
     val zoom: Int = 15
+    lateinit var model: MapsViewModel
+    lateinit var loginUtils: LoginUtils
 
     val PERMISSION_ID = 483481
 
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
 
+    lateinit var binding: ActivityMapsBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_maps)
+
+        binding = DataBindingUtil.setContentView<ActivityMapsBinding>(this, R.layout.activity_maps)
 
         if(!intent.hasExtra("topic")) {
             val i = Intent(this, HomeActivity::class.java)
             startActivity(i)
             finish()
         }
+
+        model = ViewModelProvider(this)[MapsViewModel::class.java]
+
+        loginUtils = LoginUtils(this)
 
         topic = intent.getStringExtra("topic")!!
 
@@ -89,6 +109,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
     }
 
     private fun getLastLocation() {
+        binding.progressBarMaps.show()
         if(checkPermission()) {
             if(isLocationEnable()) {
                 fusedLocationProviderClient.getCurrentLocation(Priority.PRIORITY_HIGH_ACCURACY, object : CancellationToken() {
@@ -103,6 +124,9 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                             val lat = it.latitude
                             val lon = it.longitude
                             val latLng = LatLng(lat, lon)
+                            val data = model.getPosList(loginUtils.getAccessToken()!!, latLng)
+
+                            onResponseListPosOnTracker(data)
 
                             gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom.toFloat()))
                             addPos()
@@ -155,5 +179,14 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                 toast("permission granted")
             }
         }
+    }
+
+    fun onResponseListPosOnTracker(data: LiveData<ResponseList<PosResponse>>) {
+        data.observe(this, Observer {
+            binding.progressBarMaps.hide()
+            for(pos in it.items) {
+                gMap.addMarker(MarkerOptions().position(LatLng(pos.location.lat, pos.location.lng)).title(pos.name));
+            }
+        })
     }
 }

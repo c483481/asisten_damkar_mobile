@@ -8,7 +8,7 @@ import com.example.asisten_damkar.response.LoginResponse
 import com.example.asisten_damkar.response.Response
 import retrofit2.Call
 
-class LoginRepository() {
+class LoginRepository {
     fun login(username: String, password: String): LiveData<LoginResponse?> {
         val loginResponse = MutableLiveData<LoginResponse?>()
         LoginNetwork().login(username=username, password=password).enqueue(object : retrofit2.Callback<Response<LoginResponse>> {
