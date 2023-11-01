@@ -2,6 +2,7 @@ package com.example.asisten_damkar.network
 
 import com.example.asisten_damkar.response.LoginResponse
 import com.example.asisten_damkar.response.Response
+import com.example.asisten_damkar.utils.getBaseUrl
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -20,7 +21,7 @@ interface LoginNetwork {
     companion object {
         operator fun invoke(): LoginNetwork {
             return Retrofit.Builder()
-                .baseUrl("http://10.0.3.2:777")
+                .baseUrl(getBaseUrl())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()
                 .create(LoginNetwork::class.java)
