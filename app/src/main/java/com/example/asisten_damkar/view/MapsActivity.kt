@@ -29,6 +29,7 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
@@ -107,6 +108,12 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         binding.buttonMaps.text = "tambah"
         getLastLocation()
+        gMap.setOnMarkerClickListener { marker ->
+            val xid = marker.title
+            val name = marker.snippet
+
+            true
+        }
     }
 
     private fun getLastLocation() {
@@ -147,7 +154,14 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         var activeMarker: Marker? = null
         var loc: LatLng? = null
         binding.buttonMaps.setOnClickListener {
-
+            if(loc == null) {
+                toast("add marker before add pos")
+                return@setOnClickListener
+            }
+            val i = Intent(this, AddPosActivity::class.java)
+            i.putExtra("lat", loc!!.latitude)
+            i.putExtra("lng", loc!!.longitude)
+            startActivity(i)
         }
 
         gMap.setOnMapClickListener { location->
@@ -192,7 +206,12 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         data.observe(this, Observer {
             binding.progressBarMaps.hide()
             for(pos in it.items) {
-                gMap.addMarker(MarkerOptions().position(LatLng(pos.location.lat, pos.location.lng)).title(pos.name));
+                gMap.addMarker(MarkerOptions()
+                    .position(LatLng(pos.location.lat, pos.location.lng))
+                    .title(pos.xid)
+                    .snippet(pos.name)
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pos))
+                );
             }
         })
     }

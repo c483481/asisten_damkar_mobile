@@ -7,8 +7,12 @@ import com.example.asisten_damkar.utils.getBaseUrl
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
+import retrofit2.http.Field
 import retrofit2.http.GET
 import retrofit2.http.Header
+import retrofit2.http.Headers
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface PosNetwork {
@@ -21,6 +25,13 @@ interface PosNetwork {
         @Query("showAll") showAll: Boolean = true,
     ): Call<Response<ResponseList<PosResponse>>>
 
+    @Headers("Content-Type: application/json")
+    @POST("pos")
+    fun posAddPos(
+        @Header("Authorization") token: String,
+        @Body data: PosPostRequestBody
+    ): Call<Response<PosResponse>>
+
     companion object {
         operator fun invoke(): PosNetwork {
             return Retrofit.Builder()
@@ -31,3 +42,9 @@ interface PosNetwork {
         }
     }
 }
+
+data class PosPostRequestBody(
+    val name: String,
+    val lat: Double,
+    val lng: Double,
+)

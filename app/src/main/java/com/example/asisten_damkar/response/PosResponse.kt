@@ -4,7 +4,7 @@ data class PosResponse(
     val active: Boolean,
     val createdAt: Int,
     val location: Location,
-    val modifiedBy: String,
+    val modifiedBy: ModifyBy,
     val name: String,
     val updatedAt: Int,
     val version: Int,
