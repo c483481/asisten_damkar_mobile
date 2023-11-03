@@ -9,4 +9,5 @@
     <string name="monitoring">Monitoring</string>
     <string name="profile">Profile</string>
     <string name="api_key">AIzaSyA8JhFNnsQMavbtKLxU8g-fOP1AS1rvsSc</string>
+    <string name="backButton"><![CDATA[<]]></string>
 </resources>

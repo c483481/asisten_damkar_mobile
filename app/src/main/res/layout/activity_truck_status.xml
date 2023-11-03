@@ -28,7 +28,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="<"
+                android:text="@string/backButton"
                 android:textSize="@dimen/_30sdp"
                 android:textStyle="bold"
                 android:layout_marginLeft="@dimen/_20sdp"
@@ -59,9 +59,11 @@
             android:src="@drawable/ic_truck"
             />
         <ScrollView
+            android:id="@+id/scrollViewTruckStatus"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_220sdp"
             app:layout_constraintTop_toBottomOf="@id/image"
+            android:visibility="invisible"
             >
             <LinearLayout
                 android:layout_width="match_parent"
@@ -216,6 +218,7 @@
                             android:padding="@dimen/_10sdp"
                             >
                             <androidx.recyclerview.widget.RecyclerView
+                                android:id="@+id/recyclerViewItems"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 tools:listitem="@layout/adapter_list_items"

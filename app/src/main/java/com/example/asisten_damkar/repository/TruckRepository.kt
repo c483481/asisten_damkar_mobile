@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.asisten_damkar.network.TruckNetwork
 import com.example.asisten_damkar.network.TruckRequestBody
 import com.example.asisten_damkar.response.Response
+import com.example.asisten_damkar.response.TruckDetailResponse
 import com.example.asisten_damkar.response.TruckResponse
 import retrofit2.Call
 import retrofit2.Callback
@@ -28,6 +29,30 @@ class TruckRepository {
             }
 
         })
+
+        return data
+    }
+
+    fun getDetailTruck(token: String, truckXid: String): LiveData<TruckDetailResponse?> {
+        val data = MutableLiveData<TruckDetailResponse?>()
+
+        truckNetwork.getDetailPos("Bearer $token", truckXid).enqueue(object: Callback<Response<TruckDetailResponse>> {
+            override fun onResponse(
+                call: Call<Response<TruckDetailResponse>>,
+                response: retrofit2.Response<Response<TruckDetailResponse>>
+            ) {
+                if(response.isSuccessful) {
+                    data.value = response.body()!!.data
+                    return
+                }
+                data.value = null
+            }
+
+            override fun onFailure(call: Call<Response<TruckDetailResponse>>, t: Throwable) {
+                data.value = null
+            }
+        })
+
 
         return data
     }
