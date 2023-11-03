@@ -49,5 +49,12 @@ class SearchKebakaranActivity : AppCompatActivity() {
                 startActivity(i)
             }
         })
+
+        binding.pilihSendiri.setOnClickListener{
+            val i = Intent(baseContext, MapsActivity::class.java)
+            i.putExtra("topic", "fireX")
+
+            startActivity(i)
+        }
     }
 }

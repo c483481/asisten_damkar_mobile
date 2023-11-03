@@ -25,6 +25,7 @@
             app:layout_constraintTop_toTopOf="parent"
             >
             <TextView
+                android:id="@+id/back_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -36,7 +37,8 @@
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_weight="4"
+                android:layout_marginLeft="@dimen/_30sdp"
                 android:text="Monitoring"
                 android:textSize="@dimen/_18sdp"
                 android:textStyle="bold"

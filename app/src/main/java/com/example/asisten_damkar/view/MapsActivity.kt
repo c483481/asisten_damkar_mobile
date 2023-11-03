@@ -87,6 +87,9 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
             "tracker" -> {
                 posTracker()
             }
+            "fireX" -> {
+                fireX()
+            }
         }
     }
 
@@ -94,14 +97,23 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         val lat = intent.getDoubleExtra("lat", 0.0)
         val lng = intent.getDoubleExtra("lng", 0.0)
         val latLng = LatLng(lat, lng)
-        var activeMarker = gMap.addMarker(MarkerOptions().position(latLng))
-        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom.toFloat()))
 
-        gMap.setOnMapClickListener { location->
-            activeMarker?.remove()
-            val marker = gMap.addMarker(MarkerOptions().position(location))
-            activeMarker = marker
-        }
+        val data = model.getPosList(loginUtils.getAccessToken()!!, latLng)
+
+        onResponseListPosOnTracker(data)
+
+        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom.toFloat()))
+        addFireFunction(latLng)
+    }
+
+    private fun fireX() {
+        val latLng = LatLng(1.4748, 124.8421)
+        val data = model.getPosList(loginUtils.getAccessToken()!!, latLng)
+
+        onResponseListPosOnTracker(data)
+
+        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom.toFloat()))
+        addFireFunction(null)
     }
 
     private fun posTracker() {
@@ -151,6 +163,24 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
             }
         } else {
             requestPermission()
+        }
+    }
+
+    private fun addFireFunction(loc: LatLng?) {
+        var activeMarker: Marker? = if (loc != null) gMap.addMarker(MarkerOptions().position(loc)) else null
+        var loc: LatLng? = loc
+        binding.buttonMaps.setOnClickListener {
+            if(loc == null) {
+                toast("add marker before add fire location")
+                return@setOnClickListener
+            }
+        }
+
+        gMap.setOnMapClickListener { location->
+            loc = location
+            activeMarker?.remove()
+            val marker = gMap.addMarker(MarkerOptions().position(location))
+            activeMarker = marker
         }
     }
 
