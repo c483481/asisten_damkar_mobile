@@ -27,6 +27,11 @@ interface PosNetwork {
         @Query("showAll") showAll: Boolean = true,
     ): Call<Response<ResponseList<PosResponse>>>
 
+    @GET("pos")
+    fun getAllPos(
+        @Header("Authorization") token: String,
+    ): Call<Response<ResponseList<PosResponse>>>
+
     @Headers("Content-Type: application/json")
     @POST("pos")
     fun posAddPos(
