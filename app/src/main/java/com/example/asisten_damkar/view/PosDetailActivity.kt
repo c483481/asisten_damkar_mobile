@@ -33,6 +33,13 @@ class PosDetailActivity : AppCompatActivity(), PosDetailListener {
             finish()
         }
 
+        binding.back.setOnClickListener{
+            val i = Intent(this, HomeActivity::class.java)
+            i.putExtra("posXid", xid)
+            startActivity(i)
+            finish()
+        }
+
         val viewModel = ViewModelProvider(this)[PosDetailViewModel::class.java]
         viewModel.posDetailListener = this
         viewModel.lifecycleOwner = this
