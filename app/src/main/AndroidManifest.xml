@@ -18,6 +18,15 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".view.TruckStatusActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.AddTruckActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.PosDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".view.AddPosActivity"
             android:exported="false" />
         <activity

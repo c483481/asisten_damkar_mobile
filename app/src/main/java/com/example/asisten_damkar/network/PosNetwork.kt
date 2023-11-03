@@ -1,5 +1,6 @@
 package com.example.asisten_damkar.network
 
+import com.example.asisten_damkar.response.PosJoinResponse
 import com.example.asisten_damkar.response.PosResponse
 import com.example.asisten_damkar.response.Response
 import com.example.asisten_damkar.response.ResponseList
@@ -13,6 +14,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface PosNetwork {
@@ -31,6 +33,12 @@ interface PosNetwork {
         @Header("Authorization") token: String,
         @Body data: PosPostRequestBody
     ): Call<Response<PosResponse>>
+
+    @GET("pos/{xid}")
+    fun getDetailPos(
+        @Header("Authorization") token: String,
+        @Path("xid") xid: String
+    ): Call<Response<PosJoinResponse>>
 
     companion object {
         operator fun invoke(): PosNetwork {

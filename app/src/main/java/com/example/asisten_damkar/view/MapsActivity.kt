@@ -110,7 +110,11 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         getLastLocation()
         gMap.setOnMarkerClickListener { marker ->
             val xid = marker.title
-            val name = marker.snippet
+
+            val i = Intent(this, PosDetailActivity::class.java)
+            i.putExtra("posXid", xid)
+            startActivity(i)
+            finish()
 
             true
         }

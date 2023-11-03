@@ -18,6 +18,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginHorizontal="@dimen/_20sdp"
+            android:id="@+id/search_card"
             >
             <androidx.fragment.app.FragmentContainerView
                 android:id="@+id/autocomplete_fragment"
@@ -26,6 +27,27 @@
                 android:name="com.google.android.libraries.places.widget.AutocompleteSupportFragment"
                 />
         </androidx.cardview.widget.CardView>
+        <LinearLayout
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/search_card"
+            android:layout_marginHorizontal="@dimen/_20sdp"
+            >
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_30sdp"
+                android:src="@drawable/ic_tracing_pos"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pilih pada map"
+                android:textStyle="bold"
+                android:textSize="@dimen/_15sdp"
+                android:layout_marginVertical="@dimen/_10sdp"
+                />
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
