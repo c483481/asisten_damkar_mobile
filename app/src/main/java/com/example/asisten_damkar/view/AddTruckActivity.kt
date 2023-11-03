@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.asisten_damkar.R
 import com.example.asisten_damkar.databinding.ActivityAddTruckBinding
 import com.example.asisten_damkar.listener.AddTruckListener
+import com.example.asisten_damkar.utils.LoginUtils
 import com.example.asisten_damkar.utils.hide
 import com.example.asisten_damkar.utils.show
 import com.example.asisten_damkar.utils.toast
@@ -22,6 +23,9 @@ class AddTruckActivity : AppCompatActivity(), AddTruckListener {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_add_truck)
         val model = ViewModelProvider(this)[AddTruckViewModel::class.java]
+        model.addTruckListener = this
+        model.loginUtils = LoginUtils(this)
+
         posXid = intent.getStringExtra("posXid")!!
 
         binding.submitted.setOnClickListener{

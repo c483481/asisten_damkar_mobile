@@ -63,6 +63,4 @@ class PosDetailActivity : AppCompatActivity(), PosDetailListener {
         binding.progressBarPosDetail.hide()
         toast("Failed to fetch, please logout and login again")
     }
-
-
 }
