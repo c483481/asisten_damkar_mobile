@@ -51,7 +51,8 @@
             android:layout_marginLeft="@dimen/_20sdp"
             android:layout_marginRight="@dimen/_20sdp"
             android:text="Kembali"
-            android:background="@drawable/profile_button"
+            android:backgroundTint="@color/primary"
+            android:textColor="@color/white"
             />
         <Button
             android:id="@+id/add_truck"
@@ -63,7 +64,8 @@
             android:layout_marginLeft="@dimen/_20sdp"
             android:layout_marginRight="@dimen/_20sdp"
             android:text="Tambah Truck"
-            android:background="@drawable/profile_button"
+            android:backgroundTint="@color/primary"
+            android:textColor="@color/white"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

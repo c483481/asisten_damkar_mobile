@@ -67,6 +67,31 @@ class PosRepository {
         return data
     }
 
+    fun getAllActivePos(token: String): LiveData<ResponseList<PosResponse>> {
+        val data = MutableLiveData<ResponseList<PosResponse>>()
+
+        posNetwork.getAllActivePos("Bearer $token").enqueue(object: Callback<Response<ResponseList<PosResponse>>> {
+            override fun onResponse(
+                call: Call<Response<ResponseList<PosResponse>>>,
+                response: retrofit2.Response<Response<ResponseList<PosResponse>>>
+            ) {
+                if(response.isSuccessful) {
+                    data.value = response.body()!!.data!!
+                    return
+                }
+
+                data.value = ResponseList(items = arrayOf(), count = 0)
+            }
+
+            override fun onFailure(call: Call<Response<ResponseList<PosResponse>>>, t: Throwable) {
+                data.value = ResponseList(items = arrayOf(), count = 0)
+            }
+
+        })
+
+        return data
+    }
+
     fun postAddPos(token: String, latLng: LatLng, name: String): LiveData<Boolean> {
         val data = MutableLiveData<Boolean>()
 

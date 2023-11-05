@@ -167,19 +167,27 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
     }
 
     private fun addFireFunction(loc: LatLng?) {
-        var activeMarker: Marker? = if (loc != null) gMap.addMarker(MarkerOptions().position(loc)) else null
+        var activeMarker: Marker? = if (loc != null) gMap.addMarker(MarkerOptions()
+            .position(loc)
+            .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_fire))) else null
         var loc: LatLng? = loc
         binding.buttonMaps.setOnClickListener {
             if(loc == null) {
                 toast("add marker before add fire location")
                 return@setOnClickListener
             }
+            val i = Intent(this, PosDetailFireActivity::class.java)
+            i.putExtra("lat", loc!!.latitude)
+            i.putExtra("lng", loc!!.longitude)
+            startActivity(i)
         }
 
         gMap.setOnMapClickListener { location->
             loc = location
             activeMarker?.remove()
-            val marker = gMap.addMarker(MarkerOptions().position(location))
+            val marker = gMap.addMarker(MarkerOptions()
+                .position(location)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_fire)))
             activeMarker = marker
         }
     }

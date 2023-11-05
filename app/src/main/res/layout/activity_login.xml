@@ -103,7 +103,8 @@
             android:layout_marginRight="@dimen/_20sdp"
             android:onClick="@{model::onClickLoginButton}"
             android:text="@string/login"
-            android:background="@drawable/button"
+            android:backgroundTint="@color/primary"
+            android:textColor="@color/white"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

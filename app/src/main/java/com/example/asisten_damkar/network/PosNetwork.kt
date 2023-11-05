@@ -23,13 +23,20 @@ interface PosNetwork {
         @Header("Authorization") token: String,
         @Query("filters[lng]") lng: Double,
         @Query("filters[lat]") lat: Double,
-        @Query("filters[km]") km: Int = 1,
+        @Query("filters[km]") km: Int = 10,
         @Query("showAll") showAll: Boolean = true,
     ): Call<Response<ResponseList<PosResponse>>>
 
     @GET("pos")
     fun getAllPos(
         @Header("Authorization") token: String,
+    ): Call<Response<ResponseList<PosResponse>>>
+
+    @GET("pos")
+    fun getAllActivePos(
+        @Header("Authorization") token: String,
+        @Query("showAll") showAll: Boolean = true,
+        @Query("filters[includeActive]") active: Boolean = true
     ): Call<Response<ResponseList<PosResponse>>>
 
     @Headers("Content-Type: application/json")

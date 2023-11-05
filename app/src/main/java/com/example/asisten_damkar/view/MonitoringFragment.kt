@@ -15,7 +15,6 @@ import com.example.asisten_damkar.listener.MonitoringListener
 import com.example.asisten_damkar.listener.OnClickAdapter
 import com.example.asisten_damkar.response.PosResponse
 import com.example.asisten_damkar.response.ResponseList
-import com.example.asisten_damkar.response.Truck
 import com.example.asisten_damkar.utils.LoginUtils
 import com.example.asisten_damkar.utils.hide
 import com.example.asisten_damkar.utils.show
