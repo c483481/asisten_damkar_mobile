@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:paddingHorizontal="10dp"
+    android:paddingVertical="16dp"
+    android:background="@drawable/card"
+    android:padding="@dimen/_20sdp"
+    >
+    <LinearLayout
+        android:id="@+id/locationContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/locationPlace"
+            android:layout_weight="1"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:text="loading..."
+            android:textColor="#000"
+            android:textStyle="bold"
+            android:textSize="14dp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/locationDetailTime"
+            android:layout_weight="1"
+            android:text="Active"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:textAlignment="textEnd"
+            android:textStyle="bold"
+            android:textSize="14dp"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

@@ -7,4 +7,7 @@ data class FireLocationResponse(
     val version: Int,
     val xid: String,
     val pos: PosResponse?,
+    val lat: Double,
+    val lng: Double,
+    val status: String,
 )
