@@ -58,4 +58,60 @@ class FireLocationRepository {
 
         return data
     }
+
+    fun getActiveFireLocation(token: String) : LiveData<Array<FireLocationResponse>?> {
+        val data = MutableLiveData<Array<FireLocationResponse>?>()
+
+        fireLocationNetwork.getFireLocationHomeFragment("Bearer $token", showAll = true).enqueue(object: Callback<Response<ResponseList<FireLocationResponse>>> {
+            override fun onResponse(
+                call: Call<Response<ResponseList<FireLocationResponse>>>,
+                response: retrofit2.Response<Response<ResponseList<FireLocationResponse>>>
+            ) {
+                if(response.isSuccessful) {
+                    data.value = response.body()!!.data.items
+                    return
+                }
+
+                data.value = null
+            }
+
+            override fun onFailure(
+                call: Call<Response<ResponseList<FireLocationResponse>>>,
+                t: Throwable
+            ) {
+                data.value = null
+            }
+
+        })
+
+        return data
+    }
+
+    fun getActiveFireArriveLocation(token: String) : LiveData<Array<FireLocationResponse>?> {
+        val data = MutableLiveData<Array<FireLocationResponse>?>()
+
+        fireLocationNetwork.getFireLocationHomeFragment("Bearer $token", showAll = true, arriveAt = true, status = null).enqueue(object: Callback<Response<ResponseList<FireLocationResponse>>> {
+            override fun onResponse(
+                call: Call<Response<ResponseList<FireLocationResponse>>>,
+                response: retrofit2.Response<Response<ResponseList<FireLocationResponse>>>
+            ) {
+                if(response.isSuccessful) {
+                    data.value = response.body()!!.data.items
+                    return
+                }
+
+                data.value = null
+            }
+
+            override fun onFailure(
+                call: Call<Response<ResponseList<FireLocationResponse>>>,
+                t: Throwable
+            ) {
+                data.value = null
+            }
+
+        })
+
+        return data
+    }
 }

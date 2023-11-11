@@ -10,4 +10,5 @@ data class FireLocationResponse(
     val lat: Double,
     val lng: Double,
     val status: String,
+    val arriveAt: Int?
 )

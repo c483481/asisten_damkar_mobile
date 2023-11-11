@@ -25,8 +25,10 @@ interface FireLocationNetwork {
     @GET("fire-location")
     fun getFireLocationHomeFragment(
         @Header("Authorization") token: String,
-        @Query("status") status: Int = 1,
-        @Query("limit") limit: Int = 3
+        @Query("filters[status]") status: Int? = 1,
+        @Query("limit") limit: Int = 3,
+        @Query("showAll") showAll: Boolean = false,
+        @Query("filters[nullArriveAt]") arriveAt: Boolean? = null
     ): Call<Response<ResponseList<FireLocationResponse>>>
 
     companion object {
