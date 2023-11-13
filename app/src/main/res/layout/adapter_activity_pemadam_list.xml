@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    android:paddingHorizontal="10dp"
+    android:paddingVertical="16dp"
+    android:background="@drawable/card"
+    android:padding="@dimen/_15sdp"
+    >
+    <LinearLayout
+        android:id="@+id/locationContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/locationPlacePemadam"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Kebakaran di ..."
+            android:textStyle="bold"
+            android:layout_marginBottom="@dimen/_10sdp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/waktu_kebakaran"
+            android:text="Waktu : "
+            android:textStyle="bold"
+            android:layout_marginBottom="@dimen/_10sdp"
+            />
+        <Button
+            android:id="@+id/lihat_pemadam_kebakaran"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Lihat"
+            android:backgroundTint="@color/primary"
+            />
+    </LinearLayout>
+
+</RelativeLayout>

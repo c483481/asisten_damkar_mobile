@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import com.example.asisten_damkar.response.LoginResponse
 import com.example.asisten_damkar.view.HomeActivity
+import com.example.asisten_damkar.view.HomePemadamActivity
 import com.example.asisten_damkar.view.LoginActivity
 
 class LoginUtils {
@@ -24,6 +25,8 @@ class LoginUtils {
         const val IS_LOGIN = "isLoggedIn"
         const val KEY_AT = "accessToken"
         const val ROLE = "role"
+        const val POS_XID = "posXid"
+        const val IS_PEMADAM = "isPemadam"
     }
 
     fun createLoginSession(loginResponse: LoginResponse) {
@@ -33,12 +36,23 @@ class LoginUtils {
         editor.commit()
     }
 
+    fun createPemadamSession(posXid: String) {
+        editor.putString(POS_XID, posXid)
+        editor.putBoolean(IS_PEMADAM, true)
+        editor.commit()
+    }
+
+
     fun getAccessToken(): String? {
         return pref.getString(KEY_AT, "")
     }
 
     fun getRole(): String? {
         return pref.getString(ROLE, "Error")
+    }
+
+    fun getPosXid(): String? {
+        return pref.getString(POS_XID, "")
     }
 
     fun checkIsNotLogin() {
@@ -52,8 +66,14 @@ class LoginUtils {
 
     fun checkIsLogin() {
         if(this.isLogin()) {
-            val i = Intent(con, HomeActivity::class.java)
-            con.startActivity(i)
+            if(this.isPemadam()) {
+                val i = Intent(con, HomePemadamActivity::class.java)
+                con.startActivity(i)
+            } else {
+                val i = Intent(con, HomeActivity::class.java)
+                con.startActivity(i)
+            }
+
         }
     }
 
@@ -68,5 +88,9 @@ class LoginUtils {
 
     fun isLogin(): Boolean {
         return pref.getBoolean(IS_LOGIN, false)
+    }
+
+    fun isPemadam(): Boolean {
+        return pref.getBoolean(IS_PEMADAM, false)
     }
 }

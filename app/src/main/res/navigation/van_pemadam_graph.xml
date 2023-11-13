@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/van_pemadam_graph"
+    app:startDestination="@id/homePemadamFragment">
+
+    <fragment
+        android:id="@+id/homePemadamFragment"
+        android:name="com.example.asisten_damkar.view.HomePemadamFragment"
+        android:label="fragment_home_pemadam"
+        tools:layout="@layout/fragment_home_pemadam" />
+    <fragment
+        android:id="@+id/profileFragment3"
+        android:name="com.example.asisten_damkar.view.ProfileFragment"
+        android:label="ProfileFragment" />
+</navigation>

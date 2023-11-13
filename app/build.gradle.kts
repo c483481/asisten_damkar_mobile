@@ -88,6 +88,6 @@ dependencies {
     implementation("com.google.android.libraries.places:places:3.2.0")
     implementation("com.google.android.gms:play-services-location:21.0.1")
 
-    // chart
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    // socket io
+    implementation("io.socket:socket.io-client:2.0.0")
 }

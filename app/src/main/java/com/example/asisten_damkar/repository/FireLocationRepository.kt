@@ -37,7 +37,7 @@ class FireLocationRepository {
     fun getLocation(token: String) : LiveData<Array<FireLocationResponse>> {
         val data = MutableLiveData<Array<FireLocationResponse>>()
 
-        fireLocationNetwork.getFireLocationHomeFragment("Bearer $token").enqueue(object : Callback<Response<ResponseList<FireLocationResponse>>> {
+        fireLocationNetwork.getFireLocationHomeFragment("Bearer $token", status = 1).enqueue(object : Callback<Response<ResponseList<FireLocationResponse>>> {
             override fun onResponse(
                 call: Call<Response<ResponseList<FireLocationResponse>>>,
                 response: retrofit2.Response<Response<ResponseList<FireLocationResponse>>>
@@ -62,7 +62,7 @@ class FireLocationRepository {
     fun getActiveFireLocation(token: String) : LiveData<Array<FireLocationResponse>?> {
         val data = MutableLiveData<Array<FireLocationResponse>?>()
 
-        fireLocationNetwork.getFireLocationHomeFragment("Bearer $token", showAll = true).enqueue(object: Callback<Response<ResponseList<FireLocationResponse>>> {
+        fireLocationNetwork.getFireLocationHomeFragment("Bearer $token", showAll = true, status = 1).enqueue(object: Callback<Response<ResponseList<FireLocationResponse>>> {
             override fun onResponse(
                 call: Call<Response<ResponseList<FireLocationResponse>>>,
                 response: retrofit2.Response<Response<ResponseList<FireLocationResponse>>>
@@ -107,6 +107,30 @@ class FireLocationRepository {
                 call: Call<Response<ResponseList<FireLocationResponse>>>,
                 t: Throwable
             ) {
+                data.value = null
+            }
+
+        })
+
+        return data
+    }
+
+    fun getListLocationPemadam(token: String, posXid: String) : LiveData<ResponseList<FireLocationResponse>?> {
+        val data = MutableLiveData<ResponseList<FireLocationResponse>?>()
+
+        fireLocationNetwork.getFireLocationHomeFragment("Bearer $token", status = 1, posXid = posXid, showAll = true).enqueue(object : Callback<Response<ResponseList<FireLocationResponse>>> {
+            override fun onResponse(
+                call: Call<Response<ResponseList<FireLocationResponse>>>,
+                response: retrofit2.Response<Response<ResponseList<FireLocationResponse>>>
+            ) {
+                if(response.isSuccessful) {
+                    data.value = response.body()!!.data
+                    return
+                }
+                data.value = null
+            }
+
+            override fun onFailure(call: Call<Response<ResponseList<FireLocationResponse>>>, t: Throwable) {
                 data.value = null
             }
 

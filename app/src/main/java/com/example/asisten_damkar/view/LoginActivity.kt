@@ -11,14 +11,17 @@ import com.example.asisten_damkar.R
 import com.example.asisten_damkar.databinding.ActivityLoginBinding
 import com.example.asisten_damkar.listener.LoginListener
 import com.example.asisten_damkar.response.LoginResponse
+import com.example.asisten_damkar.response.PemadamResponse
 import com.example.asisten_damkar.utils.LoginUtils
 import com.example.asisten_damkar.utils.hide
 import com.example.asisten_damkar.utils.show
+import com.example.asisten_damkar.utils.toast
 import com.example.asisten_damkar.view_model.LoginViewModel
 
 class LoginActivity: AppCompatActivity(), LoginListener {
     var binding: ActivityLoginBinding? = null
     var loginUtils: LoginUtils? = null
+    private lateinit var viewModel: LoginViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -26,7 +29,7 @@ class LoginActivity: AppCompatActivity(), LoginListener {
         loginUtils!!.checkIsLogin()
 
         binding = DataBindingUtil.setContentView<ActivityLoginBinding>(this, R.layout.activity_login)
-        val viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
+        viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
         binding?.model = viewModel
         viewModel.loginListener = this
     }
@@ -39,12 +42,28 @@ class LoginActivity: AppCompatActivity(), LoginListener {
         success.observe(this, Observer {
 
             binding!!.progressBar.hide()
-            if(it != null) {
-                loginUtils!!.createLoginSession(it)
-                startActivity(Intent(this, HomeActivity::class.java))
-            } else {
-                this.show()
+            if(it == null) {
+              this.show();
+              return@Observer
             }
+            loginUtils!!.createLoginSession(it)
+            if(it.tagRole == "PEM") {
+                viewModel.getPemadamInfo(it.key.accessToken.token, it.xid)
+                return@Observer
+            }
+            startActivity(Intent(this, HomeActivity::class.java))
+        })
+    }
+
+    override fun fallbackPemadam(success: LiveData<PemadamResponse?>) {
+        success.observe(this, Observer {
+            binding!!.progressBar.hide()
+            if(it?.pos == null) {
+                toast("data tidak valid, mohon hubungi admin")
+                return@Observer
+            }
+            loginUtils!!.createPemadamSession(it.pos.xid)
+            startActivity(Intent(this, HomePemadamActivity::class.java))
         })
     }
 
