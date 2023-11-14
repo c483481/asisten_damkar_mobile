@@ -105,8 +105,18 @@ class HomePemadamFragment : Fragment(), HomePemadamFragmentListener, HomePemadam
         activity?.runOnUiThread{
             countFireLocation += 1
             binding.infoText.text = "Jumlah Kebakaran saat ini : ${countFireLocation}"
-            items = arrayOf(data, *items.copyOf())
-            adapter.updateData(items)
+            if(items.isEmpty()) {
+                binding.infoKosong.visibility = View.INVISIBLE
+                items = arrayOf(data)
+                adapter.updateData(items)
+                val layoutManager = LinearLayoutManager(context)
+                binding.recyclerViewItems.layoutManager = layoutManager
+                binding.recyclerViewItems.adapter = adapter
+            } else {
+                items = arrayOf(data, *items.copyOf())
+                adapter.updateData(items)
+            }
+
         }
     }
 }

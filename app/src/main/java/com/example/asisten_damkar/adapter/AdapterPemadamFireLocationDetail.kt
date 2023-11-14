@@ -1,5 +1,6 @@
 package com.example.asisten_damkar.adapter
 
+import android.annotation.SuppressLint
 import android.location.Geocoder
 import android.os.Build
 import android.util.Log
@@ -33,6 +34,7 @@ class AdapterPemadamFireLocationDetail(private var items: Array<FireLocationResp
         return items.count()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun updateData(items: Array<FireLocationResponse>) {
         this.items = items
         notifyDataSetChanged()
