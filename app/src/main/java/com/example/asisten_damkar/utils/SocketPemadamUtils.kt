@@ -3,8 +3,11 @@ package com.example.asisten_damkar.utils
 import android.util.Log
 import com.example.asisten_damkar.listener.HomePemadamSocketListener
 import com.example.asisten_damkar.response.FireLocationResponse
+import com.google.gson.Gson
 import io.socket.client.IO
 import io.socket.client.Socket
+import org.json.JSONObject
+import org.json.JSONString
 
 class SocketPemadamUtils {
     private var socket: Socket = IO.socket("${getBaseUrl()}/pemadam")
@@ -20,16 +23,8 @@ class SocketPemadamUtils {
         }
 
         socket.on("fire-location") {args ->
-            val fireLocation: FireLocationResponse = args[0] as FireLocationResponse
-
+            val fireLocationArgs = args[0] as JSONObject
+            listener.onPushFireLocation(FireLocationResponse.fromJsonObject(fireLocationArgs))
         }
-    }
-
-    fun disconnect() {
-        socket.disconnect()
-    }
-
-    fun isConnected(): Boolean {
-        return socket.connected()
     }
 }

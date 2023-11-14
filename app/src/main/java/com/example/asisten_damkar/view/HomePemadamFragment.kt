@@ -1,5 +1,6 @@
 package com.example.asisten_damkar.view
 
+import android.content.Intent
 import android.location.Geocoder
 import android.os.Bundle
 import android.util.Log
@@ -18,6 +19,7 @@ import com.example.asisten_damkar.adapter.AdapterPemadamFireLocationDetail
 import com.example.asisten_damkar.databinding.FragmentHomePemadamBinding
 import com.example.asisten_damkar.listener.HomePemadamFragmentListener
 import com.example.asisten_damkar.listener.HomePemadamSocketListener
+import com.example.asisten_damkar.listener.OnClickAdapter
 import com.example.asisten_damkar.response.FireLocationResponse
 import com.example.asisten_damkar.response.ResponseList
 import com.example.asisten_damkar.utils.LoginUtils
@@ -50,7 +52,20 @@ class HomePemadamFragment : Fragment(), HomePemadamFragmentListener, HomePemadam
 
         viewModel.homePemadamFragmentListener = this
 
-        adapter = AdapterPemadamFireLocationDetail(items, geocoder)
+        val listener: OnClickAdapter<FireLocationResponse> =
+            object : OnClickAdapter<FireLocationResponse> {
+                override fun onClickAdapter(data: FireLocationResponse) {
+                    val intent = Intent(context, MapsActivity::class.java)
+                    intent.putExtra("lng", data.lng)
+                    intent.putExtra("lat", data.lat)
+                    intent.putExtra("fireLocationXid", data.xid)
+                    intent.putExtra("topic", "fireLocation")
+                    intent.putExtra("createdAt", data.createdAt)
+                    startActivity(intent)
+                }
+            }
+
+        adapter = AdapterPemadamFireLocationDetail(items, geocoder, listener)
 
         viewModel.createSocketConnection(loginUtils.getPosXid()!!)
 
@@ -88,6 +103,8 @@ class HomePemadamFragment : Fragment(), HomePemadamFragmentListener, HomePemadam
 
     override fun onPushFireLocation(data: FireLocationResponse) {
         activity?.runOnUiThread{
+            countFireLocation += 1
+            binding.infoText.text = "Jumlah Kebakaran saat ini : ${countFireLocation}"
             items = arrayOf(data, *items.copyOf())
             adapter.updateData(items)
         }

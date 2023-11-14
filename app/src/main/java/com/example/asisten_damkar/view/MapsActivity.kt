@@ -1,28 +1,39 @@
 package com.example.asisten_damkar.view
 
 import android.Manifest
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.CountDownTimer
+import android.os.Looper
+import android.view.View
+import android.widget.Button
 import android.widget.FrameLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.example.asisten_damkar.R
 import com.example.asisten_damkar.databinding.ActivityMapsBinding
+import com.example.asisten_damkar.listener.MapsUpdateSocketListener
 import com.example.asisten_damkar.response.PosResponse
 import com.example.asisten_damkar.response.ResponseList
 import com.example.asisten_damkar.utils.LoginUtils
+import com.example.asisten_damkar.utils.SocketMapsUtils
 import com.example.asisten_damkar.utils.hide
 import com.example.asisten_damkar.utils.show
 import com.example.asisten_damkar.utils.toast
 import com.example.asisten_damkar.view_model.MapsViewModel
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -38,7 +49,7 @@ import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.gms.tasks.OnTokenCanceledListener
 
 
-class MapsActivity : FragmentActivity(), OnMapReadyCallback {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     lateinit var gMap: GoogleMap
     lateinit var map: FrameLayout
@@ -50,8 +61,13 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
     val PERMISSION_ID = 483481
 
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var locationRequest: LocationRequest
+    private lateinit var locationCallback: LocationCallback
+    private lateinit var socketMapsUtils: SocketMapsUtils
 
     lateinit var binding: ActivityMapsBinding
+
+    private var globalMarker: Marker? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,7 +106,162 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
             "fireX" -> {
                 fireX()
             }
+            "fireLocation" -> {
+                socketMapsUtils = SocketMapsUtils()
+                fireLocation()
+            }
+            "supervise" -> {
+                socketMapsUtils = SocketMapsUtils()
+                val fireLocation = intent.getStringExtra("fireLocationXid")!!
+                socketMapsUtils.connect(fireLocation)
+                supervise()
+            }
         }
+    }
+
+    private fun supervise() {
+        val lat = intent.getDoubleExtra("lat", 0.0)
+        val lng = intent.getDoubleExtra("lng", 0.0)
+        val latLng = LatLng(lat, lng)
+        var activeMarker: Marker? = null
+        val listener: MapsUpdateSocketListener = object: MapsUpdateSocketListener {
+            override fun onConnected(lat: Double, lng: Double) {
+                runOnUiThread {
+                    val location = LatLng(lat, lng)
+                    activeMarker?.remove()
+                    val marker = gMap.addMarker(
+                        MarkerOptions()
+                            .position(location)
+                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pos)))
+                    activeMarker = marker
+                }
+            }
+        }
+
+        socketMapsUtils.socketEventLimit(listener)
+
+        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom.toFloat()))
+
+        gMap.addMarker(MarkerOptions()
+            .position(latLng)
+            .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_fire)))
+    }
+
+    private fun fireLocation() {
+        binding.timerContainer.visibility = View.VISIBLE
+        val createdAt = intent.getIntExtra("createdAt",0)
+        val now = System.currentTimeMillis() / 1000
+
+        val differenceInSeconds = now - createdAt
+
+        val minutes = differenceInSeconds / 60
+
+        if(minutes > 15) {
+            binding.timer.text = "Late"
+        } else {
+            val totalTimeInMillis: Long = (60000 * 15) - (differenceInSeconds * 1000) // Total waktu dalam milidetik (60 detik)
+
+            val countDownTimer = object : CountDownTimer(totalTimeInMillis, 1000) {
+                override fun onTick(millisUntilFinished: Long) {
+                    val secondsRemaining = millisUntilFinished / 1000
+                    val second = secondsRemaining % 60
+                    val minutes = secondsRemaining / 60
+                    val combineString = "$minutes:$second"
+                    binding.timer.text = combineString
+                }
+
+                override fun onFinish() {
+                    binding.timer.text = "Late"
+                }
+            }
+
+            // Mulai timer
+            countDownTimer.start()
+        }
+
+        val lat = intent.getDoubleExtra("lat", 0.0)
+        val lng = intent.getDoubleExtra("lng", 0.0)
+        val latLng = LatLng(lat, lng)
+
+        val mDialog = Dialog(this)
+
+        binding.buttonMaps.text = "Selesai"
+
+        binding.buttonMaps.setOnClickListener {
+            val fireLocationXid = intent.getStringExtra("fireLocationXid")!!
+            val updated = model.updateFireLocation(token = loginUtils.getAccessToken()!!, xid = fireLocationXid)
+            updated.observe(this, Observer {
+                if(it) {
+                    mDialog.setContentView(R.layout.pop_up_maps)
+                    mDialog.findViewById<Button>(R.id.agree).setOnClickListener {
+
+                        val i = Intent(this, HomePemadamActivity::class.java)
+                        startActivity(i)
+                    }
+                    mDialog.show()
+                    return@Observer
+                }
+                toast("Failed to clear activity, please login again")
+            })
+
+        }
+
+        gMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom.toFloat()))
+
+        gMap.addMarker(MarkerOptions()
+            .position(latLng)
+            .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_fire)))
+        var activeMarker: Marker? = null
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(p0: LocationResult) {
+                p0 ?: return
+                for (location in p0.locations) {
+                    handleLocationUpdate(location)
+                }
+            }
+        }
+
+        val fireLocationXid = intent.getStringExtra("fireLocationXid")!!
+
+        socketMapsUtils.connect(fireLocationXid)
+
+        updateLocation()
+    }
+
+    private fun updateLocation() {
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+
+        locationRequest = LocationRequest()
+        locationRequest.interval = 5000
+        locationRequest.fastestInterval = 2000
+        locationRequest.smallestDisplacement = 170f
+        locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            toast("please turn on your gps and restart the application again")
+            return
+        }
+
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            Looper.getMainLooper()
+        )
+
+        fusedLocationProviderClient.lastLocation
+            .addOnSuccessListener { location: Location? ->
+                location?.let {
+                    handleLocationUpdate(location)
+                }
+            }
+
     }
 
     private fun fireFunction() {
@@ -244,7 +415,7 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
         }
     }
 
-    fun onResponseListPosOnTracker(data: LiveData<ResponseList<PosResponse>>) {
+    private fun onResponseListPosOnTracker(data: LiveData<ResponseList<PosResponse>>) {
         data.observe(this, Observer {
             binding.progressBarMaps.hide()
             for(pos in it.items) {
@@ -256,5 +427,16 @@ class MapsActivity : FragmentActivity(), OnMapReadyCallback {
                 );
             }
         })
+    }
+
+    private fun handleLocationUpdate(location: Location) {
+        val fireLocationXid = intent.getStringExtra("fireLocationXid")!!
+        socketMapsUtils.updatePemadamLocation(location.latitude, location.longitude, fireLocationXid)
+
+        globalMarker?.remove()
+        val marker = gMap.addMarker(MarkerOptions()
+            .position(LatLng(location.latitude, location.longitude))
+            .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pos)))
+        globalMarker = marker
     }
 }

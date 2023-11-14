@@ -12,6 +12,8 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.PUT
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface FireLocationNetwork {
@@ -31,6 +33,12 @@ interface FireLocationNetwork {
         @Query("filters[nullArriveAt]") arriveAt: Boolean? = null,
         @Query("filters[posXid]") posXid: String? = null
     ): Call<Response<ResponseList<FireLocationResponse>>>
+
+    @PUT("fire-location/{xid}")
+    fun updateStatusFireLocation(
+        @Header("Authorization") token: String,
+        @Path("xid") xid: String
+    ): Call<Response<FireLocationResponse>>
 
     companion object {
         operator fun invoke(): FireLocationNetwork {

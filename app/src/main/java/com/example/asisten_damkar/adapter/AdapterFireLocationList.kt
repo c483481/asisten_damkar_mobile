@@ -29,13 +29,12 @@ class AdapterFireLocationList(private val items: Array<FireLocationResponse>, pr
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = items[position]
         geocoder.getFromLocation(item.lat, item.lng, 1, Geocoder.GeocodeListener {
-            Log.i("ini adapter", "onBindViewHolder: ${it[0].locality.toString()} ${position}")
-            if (!it[0].locality.isNullOrEmpty()) {
-                holder.place.text = it[0].locality.toString()
-                return@GeocodeListener
-            }
             if (!it[0].getAddressLine(0).split(", ")[1].isNullOrEmpty()) {
                 holder.place.text = it[0].getAddressLine(0).split(", ")[1]
+                return@GeocodeListener
+            }
+            if (!it[0].locality.isNullOrEmpty()) {
+                holder.place.text = it[0].locality.toString()
                 return@GeocodeListener
             }
             holder.place.text = "Unknown"
@@ -65,6 +64,8 @@ class AdapterFireLocationList(private val items: Array<FireLocationResponse>, pr
             holder.timeStart.text = value
 
             holder.timeEnd.text = formattedDate
+
+            holder.status.text = item.status
             return
         }
 

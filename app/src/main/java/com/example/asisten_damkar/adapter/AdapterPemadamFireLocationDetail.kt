@@ -11,11 +11,12 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.asisten_damkar.R
+import com.example.asisten_damkar.listener.OnClickAdapter
 import com.example.asisten_damkar.response.FireLocationResponse
 import java.text.SimpleDateFormat
 import java.util.Date
 
-class AdapterPemadamFireLocationDetail(private var items: Array<FireLocationResponse>, private val geocoder: Geocoder): RecyclerView.Adapter<AdapterPemadamFireLocationDetail.ViewHolder>() {
+class AdapterPemadamFireLocationDetail(private var items: Array<FireLocationResponse>, private val geocoder: Geocoder, private val listener: OnClickAdapter<FireLocationResponse>): RecyclerView.Adapter<AdapterPemadamFireLocationDetail.ViewHolder>() {
 
     class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
         val place: TextView = itemView.findViewById(R.id.locationPlacePemadam)
@@ -44,13 +45,12 @@ class AdapterPemadamFireLocationDetail(private var items: Array<FireLocationResp
         }
         val item = items[position]
         geocoder.getFromLocation(item.lat, item.lng, 1, Geocoder.GeocodeListener {
-            Log.i("ini adapter", "onBindViewHolder: ${it[0].locality.toString()} ${position}")
-            if (!it[0].locality.isNullOrEmpty()) {
-                holder.place.text = it[0].locality.toString()
-                return@GeocodeListener
-            }
             if (!it[0].getAddressLine(0).split(", ")[1].isNullOrEmpty()) {
                 holder.place.text = it[0].getAddressLine(0).split(", ")[1]
+                return@GeocodeListener
+            }
+            if (!it[0].locality.isNullOrEmpty()) {
+                holder.place.text = it[0].locality.toString()
                 return@GeocodeListener
             }
             holder.place.text = "Unknown"
@@ -63,5 +63,9 @@ class AdapterPemadamFireLocationDetail(private var items: Array<FireLocationResp
         val tanggalString = dateFormat.format(tanggal)
 
         holder.time.text = "Waktu : $tanggalString"
+
+        holder.button.setOnClickListener {
+            listener.onClickAdapter(item)
+        }
     }
 }

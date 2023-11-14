@@ -13,6 +13,7 @@ import com.example.asisten_damkar.adapter.AdapterFireLocationDetail
 import com.example.asisten_damkar.adapter.PosListAdapter
 import com.example.asisten_damkar.databinding.FragmentHomeBinding
 import com.example.asisten_damkar.listener.HomeFragmentListener
+import com.example.asisten_damkar.listener.OnClickAdapter
 import com.example.asisten_damkar.response.FireLocationResponse
 import com.example.asisten_damkar.utils.LoginUtils
 import com.example.asisten_damkar.utils.hide
@@ -56,7 +57,17 @@ class HomeFragment : Fragment(), HomeFragmentListener {
     }
 
     override fun onCallbackResponse(data: Array<FireLocationResponse>) {
-        val adapter = AdapterFireLocationDetail(data, geocoder)
+        val listener = object: OnClickAdapter<FireLocationResponse> {
+            override fun onClickAdapter(data: FireLocationResponse) {
+                val i = Intent(context, MapsActivity::class.java)
+                i.putExtra("lng", data.lng)
+                i.putExtra("lat", data.lat)
+                i.putExtra("fireLocationXid", data.xid)
+                i.putExtra("topic", "supervise")
+                startActivity(i)
+            }
+        }
+        val adapter = AdapterFireLocationDetail(data, geocoder, listener)
         val layoutManager = LinearLayoutManager(context)
         binding.homeRecyclerView.layoutManager = layoutManager
         binding.homeRecyclerView.adapter = adapter

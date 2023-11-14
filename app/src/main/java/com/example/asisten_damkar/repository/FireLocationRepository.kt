@@ -138,4 +138,23 @@ class FireLocationRepository {
 
         return data
     }
+
+    fun updateStatus(xid: String, token: String): LiveData<Boolean> {
+        val data = MutableLiveData<Boolean>()
+
+        fireLocationNetwork.updateStatusFireLocation("Bearer $token", xid).enqueue(object : Callback<Response<FireLocationResponse>> {
+            override fun onResponse(
+                call: Call<Response<FireLocationResponse>>,
+                response: retrofit2.Response<Response<FireLocationResponse>>
+            ) {
+                data.value = response.isSuccessful
+            }
+
+            override fun onFailure(call: Call<Response<FireLocationResponse>>, t: Throwable) {
+                data.value = false
+            }
+        })
+
+        return data
+    }
 }
