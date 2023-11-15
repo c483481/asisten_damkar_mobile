@@ -28,6 +28,12 @@ interface TruckNetwork {
         @Path("xid") xid: String
     ): Call<Response<TruckDetailResponse>>
 
+    @POST("truck/items")
+    fun postAddItems(
+        @Header("Authorization") token: String,
+        @Body data: ItemsRequestBody
+    ): Call<Response<Any>>
+
     companion object {
         operator fun invoke(): TruckNetwork {
             return Retrofit.Builder()
@@ -42,4 +48,9 @@ interface TruckNetwork {
 data class TruckRequestBody(
     val plat: String,
     val posXid: String,
+)
+
+data class ItemsRequestBody(
+    val truckXid: String,
+    val name: String
 )

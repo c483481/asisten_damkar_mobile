@@ -14,4 +14,9 @@
         android:id="@+id/profileFragment3"
         android:name="com.example.asisten_damkar.view.ProfileFragment"
         android:label="ProfileFragment" />
+    <fragment
+        android:id="@+id/monitoringPemadamFragment"
+        android:name="com.example.asisten_damkar.view.MonitoringPemadamFragment"
+        android:label="fragment_monitoring_pemadam"
+        tools:layout="@layout/fragment_monitoring_pemadam" />
 </navigation>

@@ -29,7 +29,7 @@
             android:layout_marginRight="@dimen/_20sdp"
             android:layout_marginTop="@dimen/_50sdp"
             android:text="Tambah"
-            android:background="@drawable/button"
+            android:backgroundTint="@color/primary"
             />
         <ProgressBar
             android:id="@+id/progress_bar_truck"

@@ -4,18 +4,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     >
-    <data>
-        <variable
-            name="model"
-            type="com.example.asisten_damkar.view_model.AddPosModel" />
-    </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".view.AddPosActivity">
 
         <EditText
-            android:id="@+id/pos_name"
+            android:id="@+id/items_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"
@@ -23,14 +18,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginHorizontal="@dimen/_20sdp"
             android:layout_marginTop="@dimen/_30sdp"
-            android:hint="Nama Pos"
+            android:hint="Nama Item"
             />
 
         <Button
             android:id="@+id/submitted"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/pos_name"
+            app:layout_constraintTop_toBottomOf="@+id/items_name"
             android:layout_marginLeft="@dimen/_20sdp"
             android:layout_marginRight="@dimen/_20sdp"
             android:layout_marginTop="@dimen/_50sdp"
@@ -38,7 +33,7 @@
             android:backgroundTint="@color/primary"
             />
         <ProgressBar
-            android:id="@+id/progress_bar_pos"
+            android:id="@+id/progress_bar_items"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toTopOf="parent"

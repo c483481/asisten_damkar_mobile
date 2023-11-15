@@ -27,6 +27,7 @@ class LoginUtils {
         const val ROLE = "role"
         const val POS_XID = "posXid"
         const val IS_PEMADAM = "isPemadam"
+        const val TRUCK_XID = "truckXid"
     }
 
     fun createLoginSession(loginResponse: LoginResponse) {
@@ -36,9 +37,10 @@ class LoginUtils {
         editor.commit()
     }
 
-    fun createPemadamSession(posXid: String) {
+    fun createPemadamSession(posXid: String, truckXid: String) {
         editor.putString(POS_XID, posXid)
         editor.putBoolean(IS_PEMADAM, true)
+        editor.putString(TRUCK_XID, truckXid)
         editor.commit()
     }
 
@@ -53,6 +55,10 @@ class LoginUtils {
 
     fun getPosXid(): String? {
         return pref.getString(POS_XID, "")
+    }
+
+    fun getTruckXid(): String? {
+        return pref.getString(TRUCK_XID, "")
     }
 
     fun checkIsNotLogin() {

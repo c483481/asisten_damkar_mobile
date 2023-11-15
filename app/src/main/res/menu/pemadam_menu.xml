@@ -5,6 +5,12 @@
         android:icon="@drawable/ic_home"
         android:id="@+id/homePemadamFragment"
         />
+
+    <item
+        android:title="@string/monitoring"
+        android:icon="@drawable/ic_monitor"
+        android:id="@+id/monitoringPemadamFragment" />
+
     <item
         android:title="@string/profile"
         android:icon="@drawable/ic_person"

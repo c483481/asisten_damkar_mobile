@@ -2,6 +2,7 @@ package com.example.asisten_damkar.repository
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.asisten_damkar.network.ItemsRequestBody
 import com.example.asisten_damkar.network.TruckNetwork
 import com.example.asisten_damkar.network.TruckRequestBody
 import com.example.asisten_damkar.response.Response
@@ -56,4 +57,25 @@ class TruckRepository {
 
         return data
     }
+
+    fun addItems(token: String, truckXid: String, name: String): LiveData<Boolean> {
+        val data = MutableLiveData<Boolean>()
+
+        truckNetwork.postAddItems("Bearer $token", ItemsRequestBody(truckXid, name)).enqueue(object: Callback<Response<Any>> {
+            override fun onResponse(
+                call: Call<Response<Any>>,
+                response: retrofit2.Response<Response<Any>>
+            ) {
+                data.value = response.isSuccessful
+            }
+
+            override fun onFailure(call: Call<Response<Any>>, t: Throwable) {
+                data.value = false
+            }
+        })
+
+
+        return data
+    }
+
 }

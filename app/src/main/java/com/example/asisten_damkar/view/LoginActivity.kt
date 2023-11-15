@@ -58,11 +58,11 @@ class LoginActivity: AppCompatActivity(), LoginListener {
     override fun fallbackPemadam(success: LiveData<PemadamResponse?>) {
         success.observe(this, Observer {
             binding!!.progressBar.hide()
-            if(it?.pos == null) {
+            if(it?.pos == null || it?.truck == null) {
                 toast("data tidak valid, mohon hubungi admin")
                 return@Observer
             }
-            loginUtils!!.createPemadamSession(it.pos.xid)
+            loginUtils!!.createPemadamSession(it.pos.xid, it.truck.xid)
             startActivity(Intent(this, HomePemadamActivity::class.java))
         })
     }
