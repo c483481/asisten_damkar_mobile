@@ -93,8 +93,8 @@ class EvaluasiActivity : AppCompatActivity() {
         }
 
         val entries = arrayListOf<PieEntry>()
-        entries.add(PieEntry(clear.toFloat(), "Clear"))
-        entries.add(PieEntry(late.toFloat(), "Late"))
+        entries.add(PieEntry(clear.toFloat(), "Clear $clear"))
+        entries.add(PieEntry(late.toFloat(), "Late $late"))
 
         val pieDataSet = PieDataSet(entries, "")
         val colors = mutableListOf<Int>()
