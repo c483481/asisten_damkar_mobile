@@ -76,8 +76,6 @@ class EvaluasiActivity : AppCompatActivity() {
         }
 
         if(!loginUtils.isPemadam()) {
-            binding.dropdown.visibility = View.VISIBLE
-
             val result = model.fetchPosData(loginUtils.getAccessToken()!!)
 
             result.observe(this, Observer {
@@ -87,15 +85,28 @@ class EvaluasiActivity : AppCompatActivity() {
             return
         }
 
-        val result = model.fetchFirstData(loginUtils.getAccessToken()!!, loginUtils.getPosXid())
+        val month = arrayListOf("all", "1", "3", "6")
+        val monthItem = arrayOf(null, 1, 3, 6)
+        val adapterMonth = ArrayAdapter(this, android.R.layout.simple_spinner_item, month)
+        adapterMonth.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.dropdownMonth.adapter = adapterMonth
 
-        result.observe(this, Observer {
-            if(it == null) {
-                return@Observer
+        binding.dropdownMonth.onItemSelectedListener = object : OnItemSelectedListener {
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val i = monthItem[id.toInt()]
+                fetchData(loginUtils.getPosXid(), i)
             }
-            items = it.items
-            createChart()
-        })
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                toast("please select the month")
+            }
+        }
     }
 
     private fun createChart() {
@@ -202,8 +213,35 @@ class EvaluasiActivity : AppCompatActivity() {
     }
 
     fun callbackPos(pos: Array<PosResponse>) {
+        binding.dropdown.visibility = View.VISIBLE
+        var monthFetch: Int? = null
+        var posXidFetch: String? = null
+
         val posName = arrayListOf<String>("All")
         val posXid = arrayListOf<String?>(null)
+
+        val month = arrayListOf("all", "1", "3", "6")
+        val monthItem = arrayOf(null, 1, 3, 6)
+        val adapterMonth = ArrayAdapter(this, android.R.layout.simple_spinner_item, month)
+        adapterMonth.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.dropdownMonth.adapter = adapterMonth
+
+        binding.dropdownMonth.onItemSelectedListener = object : OnItemSelectedListener {
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                monthFetch = monthItem[id.toInt()]
+                fetchData(posXidFetch, monthFetch)
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                toast("please select the month")
+            }
+        }
 
         for (i in pos) {
             posName.add(i.name)
@@ -214,8 +252,6 @@ class EvaluasiActivity : AppCompatActivity() {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.dropdown.adapter = adapter
 
-        val lifecycle = this
-
         binding.dropdown.onItemSelectedListener = object : OnItemSelectedListener {
 
             override fun onItemSelected(
@@ -224,22 +260,25 @@ class EvaluasiActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                val index = posXid[id.toInt()]
-
-                val result = model.fetchFirstData(loginUtils.getAccessToken()!!, index)
-
-                result.observe(lifecycle, Observer {
-                    if(it == null) {
-                        return@Observer
-                    }
-                    items = it.items
-                    createChart()
-                })
+                posXidFetch = posXid[id.toInt()]
+                fetchData(posXidFetch, monthFetch)
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 toast("please select the pos")
             }
         }
+    }
+
+    fun fetchData(posXid: String?, month: Int?) {
+        val result = model.fetchFirstData(loginUtils.getAccessToken()!!, posXid, month)
+
+        result.observe(this, Observer {
+            if(it == null) {
+                return@Observer
+            }
+            items = it.items
+            createChart()
+        })
     }
 }

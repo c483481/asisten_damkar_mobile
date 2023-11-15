@@ -31,7 +31,8 @@ interface FireLocationNetwork {
         @Query("limit") limit: Int = 3,
         @Query("showAll") showAll: Boolean = false,
         @Query("filters[nullArriveAt]") arriveAt: Boolean? = null,
-        @Query("filters[posXid]") posXid: String? = null
+        @Query("filters[posXid]") posXid: String? = null,
+        @Query("filters[month]") month: Int? = null
     ): Call<Response<ResponseList<FireLocationResponse>>>
 
     @PUT("fire-location/{xid}")

@@ -158,10 +158,10 @@ class FireLocationRepository {
         return data
     }
 
-    fun getAllFireLocationResult(token: String, posXid: String?): LiveData<ResponseList<FireLocationResponse>?> {
+    fun getAllFireLocationResult(token: String, posXid: String?, month: Int?): LiveData<ResponseList<FireLocationResponse>?> {
         val data = MutableLiveData<ResponseList<FireLocationResponse>?>()
 
-        fireLocationNetwork.getFireLocationHomeFragment("Bearer $token", showAll = true, arriveAt = true, status = null, posXid = posXid)
+        fireLocationNetwork.getFireLocationHomeFragment("Bearer $token", showAll = true, arriveAt = true, status = null, posXid = posXid, month = month)
             .enqueue(object: Callback<Response<ResponseList<FireLocationResponse>>> {
             override fun onResponse(
                 call: Call<Response<ResponseList<FireLocationResponse>>>,

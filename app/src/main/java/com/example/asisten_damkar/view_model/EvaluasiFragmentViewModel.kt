@@ -12,8 +12,8 @@ class EvaluasiFragmentViewModel: ViewModel() {
     private val fireLocationRepository = FireLocationRepository()
     private val posRepository = PosRepository()
 
-    fun fetchFirstData(token: String, posXid: String?): LiveData<ResponseList<FireLocationResponse>?> {
-        return fireLocationRepository.getAllFireLocationResult(token, posXid)
+    fun fetchFirstData(token: String, posXid: String?, month: Int?): LiveData<ResponseList<FireLocationResponse>?> {
+        return fireLocationRepository.getAllFireLocationResult(token, posXid, month)
     }
 
     fun fetchPosData(token: String): LiveData<ResponseList<PosResponse>> {
