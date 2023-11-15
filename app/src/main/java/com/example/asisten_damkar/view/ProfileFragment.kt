@@ -29,6 +29,10 @@ class ProfileFragment : Fragment(), ProfileFragmentListener {
 
         binding.model = viewModel
 
+        binding.evaluasiKerja.setOnClickListener {
+            startActivity(Intent(context, EvaluasiActivity::class.java))
+        }
+
         this.container = container!!
 
         when(loginUtils.getRole()) {
