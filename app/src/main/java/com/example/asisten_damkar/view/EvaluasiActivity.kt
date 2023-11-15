@@ -10,6 +10,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
+import android.view.View
+import android.widget.AdapterView
+import android.widget.AdapterView.OnItemSelectedListener
+import android.widget.ArrayAdapter
 import androidx.activity.result.ActivityResultCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
@@ -20,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.asisten_damkar.R
 import com.example.asisten_damkar.databinding.ActivityEvaluasiBinding
 import com.example.asisten_damkar.response.FireLocationResponse
+import com.example.asisten_damkar.response.PosResponse
 import com.example.asisten_damkar.utils.LoginUtils
 import com.example.asisten_damkar.utils.toast
 import com.example.asisten_damkar.view_model.EvaluasiFragmentViewModel
@@ -37,6 +42,8 @@ import java.util.Locale
 class EvaluasiActivity : AppCompatActivity() {
     private lateinit var items: Array<FireLocationResponse>
     private lateinit var binding: ActivityEvaluasiBinding
+    lateinit var loginUtils: LoginUtils
+    lateinit var model: EvaluasiFragmentViewModel
     private val STORAGE_PERMISSION_CODE = 23
     private val storageActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult(),
             ActivityResultCallback {
@@ -58,11 +65,26 @@ class EvaluasiActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView<ActivityEvaluasiBinding>(this, R.layout.activity_evaluasi)
 
-        val model = ViewModelProvider(this)[EvaluasiFragmentViewModel::class.java]
-        val loginUtils = LoginUtils(this)
+        model = ViewModelProvider(this)[EvaluasiFragmentViewModel::class.java]
+        loginUtils = LoginUtils(this)
+        binding.downloadPdf.setOnClickListener {
+            createPdf()
+        }
 
         if(!checkPermission()) {
             requestForStoragePermissions()
+        }
+
+        if(!loginUtils.isPemadam()) {
+            binding.dropdown.visibility = View.VISIBLE
+
+            val result = model.fetchPosData(loginUtils.getAccessToken()!!)
+
+            result.observe(this, Observer {
+                callbackPos(it.items)
+            })
+
+            return
         }
 
         val result = model.fetchFirstData(loginUtils.getAccessToken()!!, loginUtils.getPosXid())
@@ -74,10 +96,6 @@ class EvaluasiActivity : AppCompatActivity() {
             items = it.items
             createChart()
         })
-
-        binding.downloadPdf.setOnClickListener {
-            createPdf()
-        }
     }
 
     private fun createChart() {
@@ -180,6 +198,48 @@ class EvaluasiActivity : AppCompatActivity() {
             toast("$milis.pdf is create to \n$mFilePath")
         } catch (e: Exception) {
             toast(e.message + e.toString())
+        }
+    }
+
+    fun callbackPos(pos: Array<PosResponse>) {
+        val posName = arrayListOf<String>("All")
+        val posXid = arrayListOf<String?>(null)
+
+        for (i in pos) {
+            posName.add(i.name)
+            posXid.add(i.xid)
+        }
+
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, posName)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.dropdown.adapter = adapter
+
+        val lifecycle = this
+
+        binding.dropdown.onItemSelectedListener = object : OnItemSelectedListener {
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val index = posXid[id.toInt()]
+
+                val result = model.fetchFirstData(loginUtils.getAccessToken()!!, index)
+
+                result.observe(lifecycle, Observer {
+                    if(it == null) {
+                        return@Observer
+                    }
+                    items = it.items
+                    createChart()
+                })
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                toast("please select the pos")
+            }
         }
     }
 }
