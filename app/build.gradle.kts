@@ -96,4 +96,10 @@ dependencies {
 
     // socket io
     implementation("io.socket:socket.io-client:2.0.0")
+
+    // android activity
+    implementation("androidx.activity:activity-ktx:1.8.0")
+
+    // android fragment
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
 }

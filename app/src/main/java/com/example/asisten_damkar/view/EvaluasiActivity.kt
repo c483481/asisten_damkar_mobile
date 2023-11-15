@@ -1,13 +1,19 @@
 package com.example.asisten_damkar.view
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.provider.Settings
+import androidx.activity.result.ActivityResultCallback
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -31,13 +37,33 @@ import java.util.Locale
 class EvaluasiActivity : AppCompatActivity() {
     private lateinit var items: Array<FireLocationResponse>
     private lateinit var binding: ActivityEvaluasiBinding
-    private val STORAGE_CODE = 483481
+    private val STORAGE_PERMISSION_CODE = 23
+    private val storageActivityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult(),
+            ActivityResultCallback {
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+                    //Android is 11 (R) or above
+                    if(Environment.isExternalStorageManager()){
+                        //Manage External Storage Permissions Granted
+                        toast("onActivityResult: Manage External Storage Permissions Granted")
+                    }else{
+                        toast("Storage Permissions Denied");
+                    }
+                }else{
+                    toast("Version not supported");
+                }
+            }
+        )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView<ActivityEvaluasiBinding>(this, R.layout.activity_evaluasi)
 
         val model = ViewModelProvider(this)[EvaluasiFragmentViewModel::class.java]
         val loginUtils = LoginUtils(this)
+
+        if(!checkPermission()) {
+            requestForStoragePermissions()
+        }
 
         val result = model.fetchFirstData(loginUtils.getAccessToken()!!, loginUtils.getPosXid())
 
@@ -50,7 +76,7 @@ class EvaluasiActivity : AppCompatActivity() {
         })
 
         binding.downloadPdf.setOnClickListener {
-            checkPermissionAndCreatePdf()
+            createPdf()
         }
     }
 
@@ -83,13 +109,32 @@ class EvaluasiActivity : AppCompatActivity() {
         binding.pieChart.invalidate()
     }
 
-    private fun checkPermissionAndCreatePdf() {
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
-            if(checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED || checkSelfPermission(android.Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
-                return requestPermissions(arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE), STORAGE_CODE)
-            }
+    fun checkPermission(): Boolean {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            return Environment.isExternalStorageManager()
         }
-        createPdf()
+        val write = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        val read = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
+
+        return read == PackageManager.PERMISSION_GRANTED && write == PackageManager.PERMISSION_GRANTED
+    }
+
+    fun requestForStoragePermissions() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            try {
+                val intent = Intent()
+                intent.action = Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION
+                val uri = Uri.fromParts("package", packageName, null)
+                intent.data = uri
+                storageActivityResultLauncher.launch(intent);
+            } catch (e: Exception) {
+                val intent = Intent()
+                intent.action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
+                storageActivityResultLauncher.launch(intent)
+            }
+        } else {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
+        }
     }
 
     override fun onRequestPermissionsResult(
@@ -98,27 +143,28 @@ class EvaluasiActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when(requestCode) {
-            STORAGE_CODE -> {
-                if(grantResults.size > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    createPdf()
-                } else {
-                    toast("Permission denied")
+        if(requestCode == STORAGE_PERMISSION_CODE) {
+            if(grantResults.isNotEmpty()) {
+                val write = grantResults[0] == PackageManager.PERMISSION_GRANTED
+                val read = grantResults[1] == PackageManager.PERMISSION_GRANTED
+
+                if(read && write){
+                    toast("Storage Permissions Granted")
+                }else{
+                    toast("Storage Permissions Denied")
                 }
             }
         }
     }
 
-    private fun requestPermission() {
-        toast(Environment.getExternalStorageDirectory().toString())
-        ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.READ_EXTERNAL_STORAGE), STORAGE_CODE)
-    }
 
     private fun createPdf() {
         val mDoc = Document()
         val milis = System.currentTimeMillis().toString()
 
-        val mFilePath = Environment.getExternalStorageDirectory().toString() + "/" + milis + ".pdf"
+        val mFilePath =
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+                .toString() + "/" + milis + ".pdf"
         val formatTime = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
         try {
 
@@ -130,6 +176,7 @@ class EvaluasiActivity : AppCompatActivity() {
                 val dateString = formatTime.format(tanggal)
                 mDoc.add(Paragraph("xid: ${i.xid} pos: ${i.pos?.name} status: ${i.status} tanggal: ${dateString}"))
             }
+            mDoc.close()
             toast("$milis.pdf is create to \n$mFilePath")
         } catch (e: Exception) {
             toast(e.message + e.toString())
