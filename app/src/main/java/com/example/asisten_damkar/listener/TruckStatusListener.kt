@@ -6,4 +6,9 @@ interface TruckStatusListener {
     fun onSuccess(data: TruckDetailResponse)
 
     fun onFailed()
+
+    fun loading()
+    fun clear()
+    fun update(data: Boolean, xid: String)
+    fun delete(data: Boolean, xid: String)
 }

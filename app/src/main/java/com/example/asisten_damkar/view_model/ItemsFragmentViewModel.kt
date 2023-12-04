@@ -25,4 +25,6 @@ class ItemsFragmentViewModel: ViewModel() {
             addItemsListener.onSubmitted(it)
         })
     }
+
+    fun updateData(xid: String) {}
 }

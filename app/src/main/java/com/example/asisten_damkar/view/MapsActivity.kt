@@ -237,30 +237,27 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         locationRequest.smallestDisplacement = 170f
         locationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
 
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            toast("please turn on your gps and restart the application again")
-            return
+        if(checkPermission()) {
+            if(isLocationEnable()) {
+                fusedLocationProviderClient.requestLocationUpdates(
+                    locationRequest,
+                    locationCallback,
+                    Looper.getMainLooper()
+                )
+
+                fusedLocationProviderClient.lastLocation
+                    .addOnSuccessListener { location: Location? ->
+                        location?.let {
+                            handleLocationUpdate(location)
+                        }
+                    }
+            } else {
+                toast("Please enable your location service")
+            }
+        } else {
+            requestPermission()
         }
 
-        fusedLocationProviderClient.requestLocationUpdates(
-            locationRequest,
-            locationCallback,
-            Looper.getMainLooper()
-        )
-
-        fusedLocationProviderClient.lastLocation
-            .addOnSuccessListener { location: Location? ->
-                location?.let {
-                    handleLocationUpdate(location)
-                }
-            }
 
     }
 
@@ -329,8 +326,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     }
             } else {
                 toast("Please enable your location service")
-                startActivity(Intent(this, HomeActivity::class.java))
-                finish()
             }
         } else {
             requestPermission()
@@ -436,7 +431,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         globalMarker?.remove()
         val marker = gMap.addMarker(MarkerOptions()
             .position(LatLng(location.latitude, location.longitude))
-            .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_pos)))
+            .icon(BitmapDescriptorFactory.fromResource(R.drawable.ic_truck_map)))
         globalMarker = marker
     }
 }

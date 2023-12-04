@@ -13,18 +13,46 @@
         <TextView
             android:id="@+id/items_name"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_weight="0.5"
             android:text="Items A"
             />
-        <TextView
-            android:id="@+id/items_health"
+
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Baik"
-            android:textAlignment="textEnd"
-            android:layout_marginRight="@dimen/_20sdp"
-            />
+            android:layout_weight="3"
+            >
+            <Button
+                android:id="@+id/adapter_update_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Ubah"
+                android:backgroundTint="@color/quantum_lightblue"
+                />
+
+            <Button
+                android:id="@+id/adapter_delete_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Hapus"
+                android:backgroundTint="@color/red"
+                />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/items_health"
+                android:layout_weight="0.5"
+                android:text="Active"
+                android:layout_marginRight="@dimen/_10sdp"
+                android:textAlignment="textEnd"
+                android:textColor="#38782E"
+                android:textStyle="bold"
+                android:textSize="14dp"/>
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

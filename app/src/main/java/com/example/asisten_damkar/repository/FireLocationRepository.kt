@@ -37,7 +37,7 @@ class FireLocationRepository {
     fun getLocation(token: String) : LiveData<Array<FireLocationResponse>> {
         val data = MutableLiveData<Array<FireLocationResponse>>()
 
-        fireLocationNetwork.getFireLocationHomeFragment("Bearer $token", status = 1).enqueue(object : Callback<Response<ResponseList<FireLocationResponse>>> {
+        fireLocationNetwork.getFireLocationHomeFragment("Bearer $token", status = 1, showAll = true).enqueue(object : Callback<Response<ResponseList<FireLocationResponse>>> {
             override fun onResponse(
                 call: Call<Response<ResponseList<FireLocationResponse>>>,
                 response: retrofit2.Response<Response<ResponseList<FireLocationResponse>>>
