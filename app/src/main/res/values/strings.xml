@@ -7,6 +7,6 @@
     <string name="activity">Activity</string>
     <string name="monitoring">Monitoring</string>
     <string name="profile">Profile</string>
-    <string name="api_key">AIzaSyBzQxBf39evAFK_qb-kf3l3fgWLBRLO6GU</string>
+    <string name="api_key">Secret_Api_Key</string>
     <string name="backButton"><![CDATA[<]]></string>
 </resources>
